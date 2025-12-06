@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SavoryRoots Provisions | Supply Chain Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --secondary: #FF9800;
+            --accent: #1976D2;
+            --light: #F5F5F5;
+            --dark: #1A1A1A;
+            --success: #4CAF50;
+            --warning: #FFC107;
+            --danger: #d32f2f;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), #4CAF50);
+            color: white;
+            padding: 30px 0;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+        }
+        
+        .logo-text h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .business-model {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 500px;
+        }
+        
+        .model-title {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .model-desc {
+            font-size: 0.95rem;
+        }
+        
+        /* Main Content */
+        .dashboard-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+            font-size: 2rem;
+            position: relative;
+        }
+        
+        .dashboard-title:after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            background-color: var(--secondary);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        /* Product Portfolio */
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin: 40px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-image {
+            height: 180px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .product-details {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .product-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .tag-shelf-stable {
+            background-color: #E8F5E9;
+            color: var(--primary);
+        }
+        
+        .tag-perishable {
+            background-color: #FFF3E0;
+            color: #EF6C00;
+        }
+        
+        .tag-short-shelf {
+            background-color: #FCE4EC;
+            color: #C2185B;
+        }
+        
+        .tag-high-value {
+            background-color: #E3F2FD;
+            color: var(--accent);
+        }
+        
+        /* Supply Chain Steps */
+        .supply-chain {
+            margin: 50px 0;
+        }
+        
+        .steps-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .step-button {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            padding: 20px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 200px;
+            justify-content: center;
+        }
+        
+        .step-button:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2);
+        }
+        
+        .step-icon {
+            font-size: 1.5rem;
+        }
+        
+        /* Data Schema */
+        .data-schema {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin: 50px 0;
+        }
+        
+        .schema-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .schema-table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .schema-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .schema-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        /* Map Section Styles */
+        .map-section {
+            width: 100%;
+            height: 700px;
+            margin: 40px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            position: relative;
+            background-color: #f8f9fa;
+        }
+        
+        #maharashtra-map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .map-title {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a237e;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            border: 2px solid #1a237e;
+        }
+        
+        .map-legend {
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a237e;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            width: 250px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .legend-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Vibrant and dark colors with larger icons */
+        .factory-icon {
+            color: #d32f2f; /* Dark vibrant red */
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dc-icon {
+            color: #1976d2; /* Dark vibrant blue */
+            font-size: 1.7rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .store-icon {
+            color: #388e3c; /* Dark vibrant green */
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Custom marker styles */
+        .custom-div-icon {
+            background: transparent;
+            border: none;
+        }
+        
+        .factory-icon .fas {
+            color: #d32f2f;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        
+        .dc-icon .fas {
+            color: #1976d2;
+            font-size: 1.7rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        
+        .store-icon .fas {
+            color: #388e3c;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 50px;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .copyright {
+            opacity: 0.8;
+        }
+        
+        .dashboard-links a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .dashboard-links a:hover {
+            opacity: 0.8;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .steps-container {
+                flex-direction: column;
+            }
+            
+            .step-button {
+                width: 100%;
+            }
+            
+            .map-section {
+                height: 500px;
+            }
+            
+            .map-title {
+                font-size: 1.3rem;
+                padding: 10px 25px;
+            }
+            
+            .map-legend {
+                bottom: 15px;
+                right: 10px;
+                width: 200px;
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            
+            .legend-icon {
+                width: 28px;
+                height: 28px;
+                margin-right: 10px;
+            }
+            
+            .factory-icon { font-size: 1.6rem; }
+            .dc-icon { font-size: 1.5rem; }
+            .store-icon { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>SavoryRoot Provisions</h1>
+                    <div class="tagline">Nourishing Maharashtra, One Package at a Time</div>
+                </div>
+            </div>
+            <div class="business-model">
+                <div class="model-title">B2B Operations</div>
+                <div class="model-desc">Get hands on experience on how a FMCG works across various functions</div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h2 class="dashboard-title">Supply Chain Operations Dashboard</h2>
+        
+        <!-- Product Portfolio -->
+        <h3 class="section-title">Our Product Portfolio</h3>
+        <div class="products-grid">
+            <!-- Heritage Grains Muesli -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://i.ibb.co/sJt52X8Z/muesli.jpg" 
+                         alt="Heritage Grains Muesli"
+                         onerror="this.src='https://via.placeholder.com/500x350/4CAF50/FFFFFF?text=Heritage+Muesli'">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Heritage Grains Muesli</div>
+                    <div class="product-details">500g & 1kg packs | Shelf-stable</div>
+                    <span class="product-tag tag-shelf-stable">Shelf-Stable</span>
+                </div>
+            </div>
+            
+            <!-- ProGut Yogurt -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://i.ibb.co/NdZ2Cs6B/yogurt.jpg" 
+                         alt="ProGut Yogurt"
+                         onerror="this.src='https://via.placeholder.com/500x350/FF9800/FFFFFF?text=ProGut+Yogurt'">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">ProGut Yogurt</div>
+                    <div class="product-details">100g & 250g cups | Perishable</div>
+                    <span class="product-tag tag-perishable">Cold Chain Required</span>
+                </div>
+            </div>
+            
+            <!-- Artisanal Bakery Toast -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://i.ibb.co/h1BcGRJt/toast.jpg" 
+                         alt="Artisanal Bakery Toast"
+                         onerror="this.src='https://via.placeholder.com/500x350/E91E63/FFFFFF?text=Artisanal+Toast'">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Artisanal Bakery Toast</div>
+                    <div class="product-details">200g & 400g packs | Short Shelf-life</div>
+                    <span class="product-tag tag-short-shelf">Short Shelf-Life</span>
+                </div>
+            </div>
+            
+            <!-- NutriBlend Peanut Butter -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://i.ibb.co/0pDSjTBV/peanut-butter.jpg" 
+                         alt="NutriBlend Peanut Butter"
+                         onerror="this.src='https://via.placeholder.com/500x350/795548/FFFFFF?text=NutriBlend+Peanut+Butter'">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">NutriBlend Peanut Butter</div>
+                    <div class="product-details">250g, 500g & 1kg jars | Shelf-stable</div>
+                    <span class="product-tag tag-shelf-stable">Shelf-Stable</span>
+                </div>
+            </div>
+            
+            <!-- Cold-Pressed Virgin Olive Oil -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://i.ibb.co/k231K4dD/olive-oil.jpg" 
+                         alt="Cold-Pressed Virgin Olive Oil"
+                         onerror="this.src='https://via.placeholder.com/500x350/1976D2/FFFFFF?text=Cold-Pressed+Olive+Oil'">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Cold-Pressed Virgin Olive Oil</div>
+                    <div class="product-details">500ml & 1L bottles | Premium</div>
+                    <span class="product-tag tag-high-value">High-Value</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Maharashtra Map Section (Moved after Product Portfolio) -->
+    <div class="container">
+        <h3 class="section-title"> Distribution Network</h3>
+    </div>
+    <section class="map-section">
+        <div class="map-title"> Distribution Network</div>
+        <div id="maharashtra-map"></div>
+        <div class="map-legend">
+            <div class="legend-item">
+                <div class="legend-icon"><i class="fas fa-industry factory-icon"></i></div>
+                <div>Factory & Central Warehouse</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon"><i class="fas fa-warehouse dc-icon"></i></div>
+                <div>Distribution Center (DC)</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon"><i class="fas fa-store store-icon"></i></div>
+                <div>Retail Store</div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="container">
+        <!-- Data Schema -->
+        <div class="data-schema">
+            <h3 class="section-title">Sales Data Schema & Assumptions</h3>
+            <p>6 months of daily sales data (Jan 2024 - Jun 2024) with realistic patterns</p>
+            
+            <table class="schema-table">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Description</th>
+                        <th>Sample Values</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Date</td>
+                        <td>Daily timestamp</td>
+                        <td>2024-01-01 to 2024-06-30</td>
+                    </tr>
+                    <tr>
+                        <td>Distribution Center</td>
+                        <td>Four DC locations</td>
+                        <td>Mumbai, Pune, Nagpur, Sambhajinagar</td>
+                    </tr>
+                    <tr>
+                        <td>Retail Partner</td>
+                        <td>Major retail chains</td>
+                        <td>DMart, Reliance Smart, Big Bazaar</td>
+                    </tr>
+                    <tr>
+                        <td>District</td>
+                        <td>Key districts under DC coverage</td>
+                        <td>Mumbai, Thane, Pune, Nagpur, etc.</td>
+                    </tr>
+                    <tr>
+                        <td>Units Sold</td>
+                        <td>Daily sales volume</td>
+                        <td>Varies by product and location</td>
+                    </tr>
+                </tbody>
+            </table>
+     
+            <div style="margin-top: 25px; padding: 20px; background-color: #F5F5F5; border-radius: 10px;">
+                <h4 style="margin-bottom: 10px; color: var(--primary);">Data Generation Logic:</h4>
+                <ul style="padding-left: 20px;">
+                    <li><strong>DC Allocation:</strong> Mumbai (45%), Pune (30%), Nagpur (15%), Sambhajinagar (10%)</li>
+                    <li><strong>Retailer Share:</strong> DMart (40%), Reliance (35%), Big Bazaar (25%)</li>
+                    <li><strong>Trends:</strong> 2% monthly growth, seasonal patterns, promotional spikes</li>
+                    <li><strong>Product Variations:</strong> Perishables have higher volatility, shelf-stable products steadier</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sales Data Download Section -->
+    <div class="container">
+        <div class="data-schema" style="margin-top: 30px;">
+            <h3 class="section-title">Sales Data</h3>
+            <p>Download the complete sales dataset for analysis, forecasting, and supply chain optimization.</p>
+            
+            <div style="display: flex; align-items: center; gap: 20px; margin: 25px 0; padding: 20px; background-color: #E8F5E9; border-radius: 10px;">
+                <div style="font-size: 3rem; color: var(--primary);">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div style="flex: 1;">
+                    <h4 style="margin-bottom: 10px; color: var(--primary);">Complete Sales Dataset</h4>
+                    <p style="margin-bottom: 15px;">6 months of daily sales data for all 21 stores across Maharashtra. Perfect for supply chain analysis, demand forecasting, and inventory optimization.</p>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;">
+                        <!-- Download CSV Button with direct link -->
+                        <a href="https://github.com/user-attachments/files/23854522/savoryroot_store_sales.csv" 
+                           download="savoryroot_sales_data.csv"
+                           target="_blank"
+                           style="background-color: var(--accent); color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 12px; transition: all 0.3s; font-size: 1.1rem;">
+                            <i class="fas fa-download" style="font-size: 1.2rem;"></i>
+                            Download CSV Data
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 25px; padding: 20px; background-color: #F5F5F5; border-radius: 10px;">
+                <h4 style="margin-bottom: 15px; color: var(--primary);">Dataset Features:</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div style="padding: 15px; background-color: white; border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <h5 style="color: var(--primary); margin-bottom: 8px;"><i class="fas fa-calendar-alt"></i> Time Period</h5>
+                        <p>Jan 2024 - Jun 2024<br>182 days of daily data</p>
+                    </div>
+                    
+                    <div style="padding: 15px; background-color: white; border-radius: 8px; border-left: 4px solid var(--accent);">
+                        <h5 style="color: var(--accent); margin-bottom: 8px;"><i class="fas fa-store"></i> Store Coverage</h5>
+                        <p>21 stores across<br>4 regions of Maharashtra</p>
+                    </div>
+                    
+                    <div style="padding: 15px; background-color: white; border-radius: 8px; border-left: 4px solid var(--secondary);">
+                        <h5 style="color: var(--secondary); margin-bottom: 8px;"><i class="fas fa-box"></i> Product Range</h5>
+                        <p>11 SKUs across<br>5 product categories</p>
+                    </div>
+                    
+                    <div style="padding: 15px; background-color: white; border-radius: 8px; border-left: 4px solid #9C27B0;">
+                        <h5 style="color: #9C27B0; margin-bottom: 8px;"><i class="fas fa-chart-line"></i> Realistic Patterns</h5>
+                        <p>Seasonality, promotions,<br>growth trends included</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background-color: white; border-radius: 8px; border: 1px solid #ddd;">
+                    <h5 style="color: var(--primary); margin-bottom: 10px;"><i class="fas fa-info-circle"></i> Data Format:</h5>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                        <thead>
+                            <tr style="background-color: #f5f5f5;">
+                                <th style="padding: 10px; border: 1px solid #ddd; text-align: left; font-weight: 600;">Column</th>
+                                <th style="padding: 10px; border: 1px solid #ddd; text-align: left; font-weight: 600;">Description</th>
+                                <th style="padding: 10px; border: 1px solid #ddd; text-align: left; font-weight: 600;">Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Date</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Daily sales date</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">01-01-2024</td>
+                            </tr>
+                            <tr style="background-color: #f9f9f9;">
+                                <td style="padding: 10px; border: 1px solid #ddd;">Store</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Store name and location</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Mumbai Store - Central</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Retailer</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Retail chain</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">DMart</td>
+                            </tr>
+                            <tr style="background-color: #f9f9f9;">
+                                <td style="padding: 10px; border: 1px solid #ddd;">SKU</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Product with pack size</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Heritage Grains Muesli 500g</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Units_Sold</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Daily units sold</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">142</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+ <!-- Supply Chain Steps -->
+<div class="container">
+    <div class="supply-chain">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h3 class="section-title" style="text-align: center; display: inline-block; padding: 0 20px;">
+                <i class="fas fa-project-diagram"></i> End-to-End Supply Chain Management
+            </h3>
+        </div>
+        <div class="steps-container">
+            <!-- Sourcing -->
+            <a href="https://adi3011-git.github.io/SavoryRoots/sourcing/index.html" class="step-button" id="sourcing-btn">
+                <i class="fas fa-truck-loading step-icon"></i>
+                <span>Sourcing</span>
+            </a>
+            
+            <!-- Forecasting -->
+            <a href="YOUR_FORECASTING_LINK_HERE" class="step-button" id="forecasting-btn">
+                <i class="fas fa-chart-line step-icon"></i>
+                <span>Forecasting</span>
+            </a>
+            
+            <!-- Production -->
+            <a href="YOUR_PRODUCTION_LINK_HERE" class="step-button" id="production-btn">
+                <i class="fas fa-industry step-icon"></i>
+                <span>Production</span>
+            </a>
+            
+            <!-- Inventory -->
+            <a href="YOUR_INVENTORY_LINK_HERE" class="step-button" id="inventory-btn">
+                <i class="fas fa-boxes step-icon"></i>
+                <span>Inventory</span>
+            </a>
+            
+            <!-- Warehousing -->
+            <a href="YOUR_WAREHOUSING_LINK_HERE" class="step-button" id="warehousing-btn">
+                <i class="fas fa-warehouse step-icon"></i>
+                <span>Warehousing</span>
+            </a>
+            
+            <!-- Transportation -->
+            <a href="YOUR_TRANSPORTATION_LINK_HERE" class="step-button" id="transportation-btn">
+                <i class="fas fa-shipping-fast step-icon"></i>
+                <span>Transportation</span>
+            </a>
+            
+            <!-- Last-Mile -->
+            <a href="https://github.com/ADI3011-git/portfolio" class="step-button" id="lastmile-btn">
+                <i class="fas fa-truck step-icon"></i>
+                <span>Last-Mile</span>
+            </a>
+        </div>
+    </div>
+</div>
+    
+    <footer>
+        <div class="container footer-content">
+            <div class="copyright">
+                &copy; 2024 SavoryRoot Provisions. All rights reserved.
+            </div>
+            <div class="dashboard-links">
+                <a href="#"><i class="fas fa-chart-bar"></i> Analytics Dashboard</a>
+                <a href="#"><i class="fas fa-map-marked-alt"></i> Distribution Map</a>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Initialize the map centered on Maharashtra
+        const map = L.map('maharashtra-map').setView([19.7515, 75.7139], 7);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 18
+        }).addTo(map);
+        
+        // Custom icons for different location types - Larger and more vibrant
+        const factoryIcon = L.divIcon({
+            html: '<i class="fas fa-industry"></i>',
+            className: 'custom-div-icon factory-icon',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+        
+        const dcIcon = L.divIcon({
+            html: '<i class="fas fa-warehouse"></i>',
+            className: 'custom-div-icon dc-icon',
+            iconSize: [38, 38],
+            iconAnchor: [19, 19]
+        });
+        
+        const storeIcon = L.divIcon({
+            html: '<i class="fas fa-store"></i>',
+            className: 'custom-div-icon store-icon',
+            iconSize: [34, 34],
+            iconAnchor: [17, 17]
+        });
+        
+        // Factory & Central Warehouse location
+        const factoryLocation = [18.7606, 73.8620]; // Chakan, Pune
+        L.marker(factoryLocation, { icon: factoryIcon })
+            .addTo(map)
+            .bindPopup('<b>Factory & Central Warehouse</b><br>Chakan, Pune<br><em>Primary Manufacturing Facility</em>');
+        
+        // Distribution Centers with their locations - INCLUDING SAMBHAJINAGAR
+        const distributionCenters = [
+            {
+                name: "Mumbai DC",
+                location: [19.2812, 73.0481], // Bhiwandi
+                address: "Bhiwandi, Mumbai",
+                region: "Mumbai"
+            },
+            {
+                name: "Pune DC",
+                location: [18.7606, 73.8620], // Chakan, Pune
+                address: "Chakan, Pune",
+                region: "Pune"
+            },
+            {
+                name: "Nagpur DC",
+                location: [21.1469, 79.0882], // Nagpur
+                address: "Nagpur",
+                region: "Nagpur"
+            },
+            {
+                name: "Sambhajinagar DC", // NEW DC
+                location: [19.8740, 75.3439], // Sambhajinagar (Aurangabad)
+                address: "Sambhajinagar",
+                region: "Aurangabad"
+            }
+        ];
+        
+        // Add DC markers to the map
+        distributionCenters.forEach(dc => {
+            L.marker(dc.location, { icon: dcIcon })
+                .addTo(map)
+                .bindPopup(`<b>${dc.name}</b><br>${dc.address}<br><em>${dc.region} Region Distribution Hub</em>`);
+        });
+        
+        // Extensive retail stores for each region - INCLUDING AHLIYANAGAR
+        const retailStores = [
+            // Mumbai region stores - 6 stores
+            { name: "Mumbai Store - Central", location: [19.0760, 72.8777], region: "Mumbai" },
+            { name: "Mumbai Store - North", location: [19.2147, 72.8612], region: "Mumbai" },
+            { name: "Thane Store - West", location: [19.1928, 72.9670], region: "Mumbai" },
+            { name: "Navi Mumbai Store - Vashi", location: [19.0735, 73.0158], region: "Mumbai" },
+            { name: "Kalyan Store", location: [19.2437, 73.1355], region: "Mumbai" },
+            { name: "Bhiwandi Store", location: [19.2962, 73.0631], region: "Mumbai" },
+           
+            // Pune region stores - 7 stores
+            { name: "Pune Store - Central", location: [18.5204, 73.8567], region: "Pune" },
+            { name: "Pune Store - West", location: [18.5236, 73.8478], region: "Pune" },
+            { name: "Pimpri Store", location: [18.6279, 73.8000], region: "Pune" },
+            { name: "Wakad Store", location: [18.5993, 73.7625], region: "Pune" },
+            { name: "Kharadi Store", location: [18.5525, 73.9415], region: "Pune" },
+            { name: "Hadapsar Store", location: [18.5074, 73.9413], region: "Pune" },
+            { name: "Bhosari Store", location: [18.6325, 73.8431], region: "Pune" },
+            
+            // Nagpur region stores - 4 stores
+            { name: "Nagpur Store - Central", location: [21.1458, 79.0882], region: "Nagpur" },
+            { name: "Nagpur Store - West", location: [21.1302, 79.0576], region: "Nagpur" },
+            { name: "Nagpur Store - East", location: [21.1600, 79.1100], region: "Nagpur" },
+            { name: "Wardha Store", location: [20.7453, 78.6022], region: "Nagpur" },
+  
+            // Aurangabad region stores - INCLUDING AHLIYANAGAR
+            { name: "Aurangabad Store - Central", location: [19.8762, 75.3433], region: "Aurangabad" },
+            { name: "Aurangabad Store - CIDCO", location: [19.9011, 75.3527], region: "Aurangabad" },
+            { name: "Jalna Store", location: [19.8410, 75.8860], region: "Aurangabad" },
+            { name: "Ahilyanagar Store", location: [19.1538, 74.7467], region: "Ahmednagar" }
+        ];
+        
+        // Add retail store markers to the map
+        retailStores.forEach(store => {
+            L.marker(store.location, { icon: storeIcon })
+                .addTo(map)
+                .bindPopup(`<b>${store.name}</b><br>${store.region} Region`);
+        });
+        
+        // Add a highlighted circle around the factory
+        L.circle(factoryLocation, {
+            color: '#d32f2f',
+            fillColor: '#d32f2f',
+            fillOpacity: 0.15,
+            radius: 12000,
+            weight: 3
+        }).addTo(map);
+        
+        // Add circles around DCs
+        distributionCenters.forEach(dc => {
+            L.circle(dc.location, {
+                color: '#1976d2',
+                fillColor: '#1976d2',
+                fillOpacity: 0.1,
+                radius: 8000,
+                weight: 2
+            }).addTo(map);
+        });
+        
+        // Fit map to show all markers with padding
+        const allLocations = [factoryLocation, 
+            ...distributionCenters.map(dc => dc.location), 
+            ...retailStores.map(store => store.location)];
+        
+        const bounds = L.latLngBounds(allLocations);
+        map.fitBounds(bounds, { padding: [60, 60] });
+        
+        // Add zoom controls
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(map);
+        
+        // Button functionality for supply chain steps
+        document.querySelectorAll('.step-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const stepName = this.id.replace('-btn', '');
+                const stepTitles = {
+                    sourcing: "Sourcing & Procurement",
+                    forecasting: "Demand Forecasting",
+                    production: "Production Planning",
+                    inventory: "Inventory Management",
+                    warehousing: "Warehouse Operations",
+                    transportation: "Transportation Logistics",
+                    lastmile: "Last-Mile Delivery"
+                };
+                alert(`Navigating to ${stepTitles[stepName]} module. This would link to detailed analytics for this supply chain stage.`);
+            });
+        });
+        
+        // Product card interaction
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const productName = this.querySelector('.product-name').textContent;
+                const productDetails = this.querySelector('.product-details').textContent;
+                alert(`Product Details:\n\n${productName}\n${productDetails}\n\nClick would open detailed product analytics.`);
+            });
+        });
+    </script>
+</body>
+
+</html>
+
