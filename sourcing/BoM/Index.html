@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SavoryRoots - BOM Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c5530, #4a7c59);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .product-section {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-left: 5px solid #4a7c59;
+        }
+        
+        .product-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #2c5530;
+            font-size: 1.6rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .product-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #e9f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: #2c5530;
+        }
+        
+        .pack-size {
+            background-color: #4a7c59;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 15px;
+            font-weight: normal;
+        }
+        
+        .bom-tables {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 15px;
+        }
+        
+        .bom-table-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        th {
+            background-color: #f1f8e9;
+            color: #2c5530;
+            font-weight: 600;
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 2px solid #c5e1a5;
+        }
+        
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .highlight {
+            background-color: #e8f5e8;
+            font-weight: 600;
+        }
+        
+        .total-row {
+            background-color: #f1f8e9;
+            font-weight: bold;
+        }
+        
+        .ingredient-category {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .footnote {
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .section-divider {
+            height: 1px;
+            background-color: #e9ecef;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .bom-tables {
+                flex-direction: column;
+            }
+            
+            .bom-table-container {
+                min-width: 100%;
+            }
+            
+            .product-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .product-icon {
+                margin-bottom: 10px;
+            }
+            
+            .pack-size {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+        
+        .summary-box {
+            background-color: #f1f8e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #4a7c59;
+        }
+        
+        .summary-title {
+            font-weight: 600;
+            color: #2c5530;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SavoryRoots Bill of Materials Dashboard</h1>
+            <p class="subtitle">Complete Raw Material Breakdown by Product</p>
+        </header>
+        
+        <!-- Product 1: Heritage Grains Muesli -->
+        <div class="product-section">
+            <div class="product-title">
+                <div class="product-icon">1</div>
+                <div>Heritage Grains Muesli</div>
+                <div class="pack-size">Shelf Stable</div>
+            </div>
+            
+            <div class="bom-tables">
+                <!-- 500g Pack -->
+                <div class="bom-table-container">
+                    <h3>500g Pack</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>% Composition</th>
+                                <th>Qty per Pack</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rolled Oats</td>
+                                <td>50%</td>
+                                <td>250g</td>
+                            </tr>
+                            <tr>
+                                <td>Multigrain Flakes</td>
+                                <td>25%</td>
+                                <td>125g</td>
+                            </tr>
+                            <tr>
+                                <td>Dried Fruits (Raisins + Apricots)</td>
+                                <td>15%</td>
+                                <td>75g</td>
+                            </tr>
+                            <tr>
+                                <td>Nuts & Seeds (Almonds, Cashews, Sunflower, Chia, Flax)</td>
+                                <td>10%</td>
+                                <td>50g</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Primary Total</strong></td>
+                                <td><strong>100%</strong></td>
+                                <td><strong>500g</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="highlight">Packaging Components</td>
+                            </tr>
+                            <tr>
+                                <td>Laminated Pouch + Zipper</td>
+                                <td>—</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Sticker/Label Sleeve</td>
+                                <td>—</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Corrugated Carton (holds 20 units)</td>
+                                <td>—</td>
+                                <td>1/20 unit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 1kg Pack -->
+                <div class="bom-table-container">
+                    <h3>1kg Pack</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>% Composition</th>
+                                <th>Qty per Pack</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rolled Oats</td>
+                                <td>50%</td>
+                                <td>500g</td>
+                            </tr>
+                            <tr>
+                                <td>Multigrain Flakes</td>
+                                <td>25%</td>
+                                <td>250g</td>
+                            </tr>
+                            <tr>
+                                <td>Dried Fruits</td>
+                                <td>15%</td>
+                                <td>150g</td>
+                            </tr>
+                            <tr>
+                                <td>Nuts & Seeds</td>
+                                <td>10%</td>
+                                <td>100g</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Primary Total</strong></td>
+                                <td><strong>100%</strong></td>
+                                <td><strong>1000g</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="highlight">Packaging Components</td>
+                            </tr>
+                            <tr>
+                                <td>Laminated Pouch + Zipper</td>
+                                <td>—</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Label</td>
+                                <td>—</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Corrugated carton (20 units)</td>
+                                <td>—</td>
+                                <td>1/20 unit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product 2: ProGut Yogurt -->
+        <div class="product-section">
+            <div class="product-title">
+                <div class="product-icon">2</div>
+                <div>ProGut Yogurt</div>
+                <div class="pack-size">Perishable & Cold Chain</div>
+            </div>
+            
+            <div class="bom-tables">
+                <!-- 100g Cup -->
+                <div class="bom-table-container">
+                    <h3>100g Cup</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Fresh Buffalo Milk</td>
+                                <td>95g</td>
+                            </tr>
+                            <tr>
+                                <td>Probiotic Culture</td>
+                                <td>0.6g</td>
+                            </tr>
+                            <tr>
+                                <td>Stabilizers (Pectin/Guar)</td>
+                                <td>0.4g</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Total Net Weight</strong></td>
+                                <td><strong>100g</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="highlight">Packaging & Logistics</td>
+                            </tr>
+                            <tr>
+                                <td>PP Cup (100g)</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Aluminum Foil Lid</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Shrink Wrapping (15 cups/tray)</td>
+                                <td>1/15 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Ice Gel Pack</td>
+                                <td>1/10 unit (transport)</td>
+                            </tr>
+                            <tr>
+                                <td>Cold Chain Crate (Returnable)</td>
+                                <td>— (not BOM costed, asset)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 250g Cup -->
+                <div class="bom-table-container">
+                    <h3>250g Cup</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Fresh Buffalo Milk</td>
+                                <td>238g</td>
+                            </tr>
+                            <tr>
+                                <td>Probiotic Culture</td>
+                                <td>1.2g</td>
+                            </tr>
+                            <tr>
+                                <td>Stabilizers</td>
+                                <td>0.8g</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Total Net Weight</strong></td>
+                                <td><strong>250g</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="highlight">Packaging & Logistics</td>
+                            </tr>
+                            <tr>
+                                <td>PP Cup (250g)</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Aluminum Foil Lid</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Shrink Wrapping (8 cups/tray)</td>
+                                <td>1/8 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Ice Gel Pack</td>
+                                <td>1/4 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Cold Chain Crate</td>
+                                <td>Returnable asset</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product 3: Artisanal Bakery Toast -->
+        <div class="product-section">
+            <div class="product-title">
+                <div class="product-icon">3</div>
+                <div>Artisanal Bakery Toast</div>
+                <div class="pack-size">Short Shelf-life</div>
+            </div>
+            
+            <div class="bom-tables">
+                <!-- 200g Pack -->
+                <div class="bom-table-container">
+                    <h3>200g Pack</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>%</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Wheat Flour</td>
+                                <td>70%</td>
+                                <td>140g</td>
+                            </tr>
+                            <tr>
+                                <td>Water</td>
+                                <td>20%</td>
+                                <td>40g</td>
+                            </tr>
+                            <tr>
+                                <td>Vegetable Oil</td>
+                                <td>5%</td>
+                                <td>10g</td>
+                            </tr>
+                            <tr>
+                                <td>Sugar + Salt + Yeast</td>
+                                <td>5%</td>
+                                <td>10g</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Baked Bread Weight</strong></td>
+                                <td><strong>100%</strong></td>
+                                <td><strong>200g</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="highlight">Packaging</td>
+                            </tr>
+                            <tr>
+                                <td>LDPE Bag</td>
+                                <td>—</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Plastic Clip/Seal</td>
+                                <td>—</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Carton (holds 25 packs)</td>
+                                <td>—</td>
+                                <td>1/25 unit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 400g Pack -->
+                <div class="bom-table-container">
+                    <h3>400g Pack</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>%</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Wheat Flour</td>
+                                <td>70%</td>
+                                <td>280g</td>
+                            </tr>
+                            <tr>
+                                <td>Water</td>
+                                <td>20%</td>
+                                <td>80g</td>
+                            </tr>
+                            <tr>
+                                <td>Oil</td>
+                                <td>5%</td>
+                                <td>20g</td>
+                            </tr>
+                            <tr>
+                                <td>Sugar + Salt + Yeast</td>
+                                <td>5%</td>
+                                <td>20g</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Baked Bread Weight</strong></td>
+                                <td><strong>—</strong></td>
+                                <td><strong>400g</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="highlight">Packaging</td>
+                            </tr>
+                            <tr>
+                                <td>LDPE Bag</td>
+                                <td>—</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Clip/Seal</td>
+                                <td>—</td>
+                                <td>1 unit</td>
+                            </tr>
+                            <tr>
+                                <td>Carton (25 units)</td>
+                                <td>—</td>
+                                <td>1/25 unit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product 4: NutriBlend Peanut Butter -->
+        <div class="product-section">
+            <div class="product-title">
+                <div class="product-icon">4</div>
+                <div>NutriBlend Peanut Butter</div>
+                <div class="pack-size">Shelf Stable</div>
+            </div>
+            
+            <div class="bom-table-container" style="width:100%">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>% Composition</th>
+                            <th>250g Jar</th>
+                            <th>500g Jar</th>
+                            <th>1kg Jar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Roasted Peanuts</td>
+                            <td>90%</td>
+                            <td>225g</td>
+                            <td>450g</td>
+                            <td>900g</td>
+                        </tr>
+                        <tr>
+                            <td>Palm Oil</td>
+                            <td>7%</td>
+                            <td>17.5g</td>
+                            <td>35g</td>
+                            <td>70g</td>
+                        </tr>
+                        <tr>
+                            <td>Honey</td>
+                            <td>2%</td>
+                            <td>5g</td>
+                            <td>10g</td>
+                            <td>20g</td>
+                        </tr>
+                        <tr>
+                            <td>Salt</td>
+                            <td>1%</td>
+                            <td>2.5g</td>
+                            <td>5g</td>
+                            <td>10g</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Net Product Total</strong></td>
+                            <td><strong>100%</strong></td>
+                            <td><strong>250g</strong></td>
+                            <td><strong>500g</strong></td>
+                            <td><strong>1000g</strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="highlight">Packaging Components</td>
+                        </tr>
+                        <tr>
+                            <td>PET/Glass Jar</td>
+                            <td>—</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Plastic Screw Cap</td>
+                            <td>—</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Tamper-Proof Induction Seal</td>
+                            <td>—</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Printed Label</td>
+                            <td>—</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Corrugated Shipper (12 jars)</td>
+                            <td>—</td>
+                            <td>1/12</td>
+                            <td>1/12</td>
+                            <td>1/12</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Product 5: Cold-Pressed Virgin Olive Oil -->
+        <div class="product-section">
+            <div class="product-title">
+                <div class="product-icon">5</div>
+                <div>Cold-Pressed Virgin Olive Oil</div>
+                <div class="pack-size">High Value</div>
+            </div>
+            
+            <div class="bom-table-container" style="width:100%">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>500ml Bottle</th>
+                            <th>1L Bottle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Virgin Olive Oil</td>
+                            <td>500ml</td>
+                            <td>1000ml</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="highlight">Packaging Components</td>
+                        </tr>
+                        <tr>
+                            <td>Dark Glass Bottle</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Metal Screw Cap + Tamper Band</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Printed Label</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Outer Safety Carton (6 bottles)</td>
+                            <td>1/6</td>
+                            <td>1/6</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="summary-box">
+                <div class="summary-title">BOM Summary Notes:</div>
+                <p>• All quantities are per individual retail unit unless specified otherwise</p>
+                <p>• Packaging components marked as fractions (e.g., 1/20 unit) represent shared packaging across multiple units</p>
+                <p>• Cold chain items require special handling and logistics planning</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
